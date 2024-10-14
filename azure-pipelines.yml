@@ -38,7 +38,8 @@ steps:
      azureSubscription: 'Pay-As-You-Go(a0f91dff-a269-426d-8276-311c06f1571b)'
      command: 'publish'
      publishWebProjects: true
-     arguments: '''--configuration $(buildConfiguration) --output $(build.artifactstagingdirector)'''
+     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirector)'
+     zipAfterPublish: True
  - task: PublishBuildArtifacts@1
    inputs:
      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
