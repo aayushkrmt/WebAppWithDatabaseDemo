@@ -1,0 +1,44 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: windows-2019
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+ - task: DotNetCoreCLI@2
+   displayName: Restore Nuget Packages
+   inputs:
+     azureSubscription: 'Pay-As-You-Go(a0f91dff-a269-426d-8276-311c06f1571b)'
+     command: 'restore'
+     projects: '**/WebApp.csproj'
+ - task: DotNetCoreCLI@2
+   displayName: Build package
+   inputs:
+     azureSubscription: 'Pay-As-You-Go(a0f91dff-a269-426d-8276-311c06f1571b)'
+     command: 'build'
+     projects: '**/WebApp.csproj'
+     arguments: '--configuration $(buildConfiguration)'
+ - task: DotNetCoreCLI@2
+   displayName: Test
+   inputs:
+    azureSubscription: 'Pay-As-You-Go(a0f91dff-a269-426d-8276-311c06f1571b)'
+    command: 'test'
+    projects: '**/*UnitTest*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+ - task: DotNetCoreCLI@2
+   inputs:
+     azureSubscription: 'Pay-As-You-Go(a0f91dff-a269-426d-8276-311c06f1571b)'
+     command: 'publish'
+     publishWebProjects: true
+     arguments: '''--configuration $(buildConfiguration) --output $(build.artifactstagingdirector)'''
+ - task: PublishBuildArtifacts@1
+   inputs:
+     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
